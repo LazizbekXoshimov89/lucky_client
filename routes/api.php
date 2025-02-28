@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GiftController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,3 +20,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post("user/login", [UserController::class, "login"]);
+Route::middleware('auth:sanctum')->group(function () {
+Route::post("gift/importFromExcel", [GiftController::class, "ImportFromExcel"]);
+    });
+
