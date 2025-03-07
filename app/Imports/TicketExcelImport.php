@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\Ticket;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
 class TicketExcelImport implements ToCollection
@@ -14,15 +13,26 @@ class TicketExcelImport implements ToCollection
     */
     public function collection(Collection $rows)
     {
+        $rows->shift();
+        $data =[];
         foreach ($rows as $row){
-            Log::error($row[0]);
-            Ticket::create([
-               'title' => $row[0],
-                'count' => $row[1],
-                'current_count' => $row[2],
+            if($row[0]){
+                $data[] = [
+                'ticket' => $row[0],
+                'contract_number' => $row[1],
+                'client_fio' => $row[2],
+                'workplace' => $row[3],
+                'filial' => $row[4],
+                'phone_number' => $row[5],
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-            // Your code here to perform any necessary operations with the imported data.
-          }
+                ];
+            }
+
+        }
+        Ticket::insert($data);
+
     }
+
+
 }
