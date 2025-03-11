@@ -16,10 +16,12 @@ return new class extends Migration
             $table->string('ticket')->unique();
             $table->Integer('contract_number');
             $table->string('client_fio');
+            $table->integer('client_id');
+            $table->boolean('active')->default(false);
             $table->string('workplace');
             $table->string('filial');
             $table->string('phone_number');
-            $table->foreignId('gift_id')->constrained('gifts');
+            $table->foreignId('gift_id')->nullable()->constrained('gifts');
             $table->boolean('is_winner')->nullable();
             $table->timestamps();
         });

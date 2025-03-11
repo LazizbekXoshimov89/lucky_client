@@ -25,6 +25,6 @@ Route::post("user/login", [UserController::class, "login"]);
 Route::middleware('auth:sanctum')->group(function () {
 Route::post("gift/importFromExcel", [GiftController::class, "ImportFromExcel"]);
 Route::post("ticket/importFromExcel", [TicketController::class, "ImportFromExcel"]);
-Route::get("bakalWin", [GameController::class, "bakalWin"]);
+Route::get("bakalWin", [GameController::class, "winBakal"]);
 });
 

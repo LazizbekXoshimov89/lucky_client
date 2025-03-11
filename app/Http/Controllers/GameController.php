@@ -11,7 +11,42 @@ class GameController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function bakalWin()
+    public function winBakal()
+    {
+        $count = 3;
+        $giftId = Gift::where('title', 'bakal')->value('id');
+        for ($i = 0; $i < $count; $i++) {
+            $win = Ticket::where('is_winner', false)->inRandomOrder()->take(1)->pluck('client_id');
+
+            Ticket::where('client_id', $win)->update(
+                [
+                    'is_winner' => 1,
+                    'gift_id' => $giftId,
+                    'updated_at'=> date('Y-m-d'),
+                ]
+            );
+
+            //         $wins = Ticket::where('client_fio', 'like', $win->client_fio)->get();
+            //         foreach ($ts as $t) {
+            //             $t->update([
+            //                 'is_winner' => true,
+            //                 'gift_id' => $giftId,
+            //             ]);
+            //         }
+            //     }
+
+        }
+        //return $win;
+        return  Ticket::where('is_winner', true)
+                ->orderBy('client_fio')
+                ->get()
+                ->unique('client_fio')
+                ->values();
+    }
+
+
+    /*
+  public function bakalWin()
     {
         $count = 10;
         for ($i = 0; $i < $count; $i++) {
@@ -33,9 +68,7 @@ class GameController extends Controller
             ->unique('client_fio')
             ->values();
     }
-
-
-
+*/
 
 
 
