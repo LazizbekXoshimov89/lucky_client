@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GiftSecondRequest;
 use App\Models\Gift;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -22,53 +24,20 @@ class GameController extends Controller
                 [
                     'is_winner' => 1,
                     'gift_id' => $giftId,
-                    'updated_at'=> date('Y-m-d'),
+                    'updated_at' => date('Y-m-d'),
                 ]
             );
-
-            //         $wins = Ticket::where('client_fio', 'like', $win->client_fio)->get();
-            //         foreach ($ts as $t) {
-            //             $t->update([
-            //                 'is_winner' => true,
-            //                 'gift_id' => $giftId,
-            //             ]);
-            //         }
-            //     }
-
         }
-        //return $win;
-        return  Ticket::where('is_winner', true)
-                ->orderBy('client_fio')
-                ->get()
-                ->unique('client_fio')
-                ->values();
-    }
 
-
-    /*
-  public function bakalWin()
-    {
-        $count = 10;
-        for ($i = 0; $i < $count; $i++) {
-            $tickets = Ticket::where('is_winner', false)
-                ->get();
-            $win = $tickets->random();
-            $giftId = Gift::where('title', 'bakal')->value('id');
-            $ts = Ticket::where('client_fio', 'like', $win->client_fio)->get();
-            foreach ($ts as $t) {
-                $t->update([
-                    'is_winner' => true,
-                    'gift_id' => $giftId,
-                ]);
-            }
-        }
         return  Ticket::where('is_winner', true)
             ->orderBy('client_fio')
             ->get()
             ->unique('client_fio')
             ->values();
     }
-*/
+
+
+
 
 
 
@@ -77,9 +46,44 @@ class GameController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+    public function secondUsul(GiftSecondRequest $request)
+    {   DB::beginTransaction();
+        try{
+        //$giftCount = gift::where('id', $request->id)->first();
+        $gift = gift::find($request->id);
+
+        if ($gift->current_count <= 0) {
+            return "bu id li sovg'a uchun allaqachon g'oliblar aniqlangan";
+        }
+        for ($i = 0; $i < $gift->current_count; $i++) {
+            $win = Ticket::where('active', false)->inRandomOrder()->first();
+
+            Ticket::where('client_id', $win->client_id)->update(
+                [
+                    'active' => true,
+                    'updated_at' => date('Y-m-d'),
+                ]
+            );
+            $win->update([
+                'is_winner' => true,
+                'gift_id' => $request->id
+            ]);
+        }
+        $gift->update([
+            'current_count' => 0,
+        ]);
+
+    DB::commit();
+        return  Ticket::where('is_winner', true)
+            ->orderBy('client_fio')
+            ->get()
+            ->unique('client_fio')
+            ->values();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
     /**
