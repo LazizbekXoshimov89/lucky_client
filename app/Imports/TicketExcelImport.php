@@ -24,8 +24,11 @@ class TicketExcelImport implements ToCollection
                 'client_id' => $row[3],
                 'active' => $row[4],
                 'workplace' => $row[5],
-                'filial' => $row[6],
-                'phone_number' => $row[7],
+                'phone_number' => $row[6],
+                'filial' => $row[7],
+                'filial_id' => $row[8],
+                'gift_id' => $row[9],
+                'is_winner' => $row[10],
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
                 ];

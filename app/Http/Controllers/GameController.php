@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GiftSecondRequest;
 use App\Http\Requests\GiftThirdRequest;
 use App\Models\Gift;
+use App\Models\Organization;
 use App\Models\OrganizationGifts;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -169,7 +170,7 @@ class GameController extends Controller
         OrganizationGifts::insert($orgGifts);
         $gift->update([
             'current_count' => 0,
-            
+
         ]);
 
 
@@ -178,9 +179,45 @@ class GameController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function finishUsul(GiftThirdRequest $request)
     {
-        //
+         $gift = gift::where('id',$request->id)->first();
+         if($gift->current_count <= 0){
+            return response()->json([
+                'message' => "bu id li sovg'a uchun allaqachon g'oliblar aniqlangan",
+            ]);
+         }
+         if($gift->is_super == true){
+
+            $orgs_id = OrganizationGifts::where('gift_id', $request->id)->pluck('organization_id');
+           // $regions_id = Organization::where('id', $orgs_id)->pluck('region_id');
+            $win = Ticket::where('active', false)
+                ->whereNotIn('filial_id', $orgs_id)
+                ->inRandomOrder()
+                ->first();
+
+                Ticket::where('client_id', $win->client_id)->update(
+                    [
+                        'active' => true,
+                        'updated_at' => date('Y-m-d'),
+                    ]
+                );
+                $win->update([
+                    'is_winner' => true,
+                    'gift_id' => $request->id
+                ]);
+                $regions_id = Organization::where('id', $win->filial_id)->first();
+                Organization::where('region_id', $regions_id->region_id)->update([
+                    'active' => false
+                ]);
+
+                OrganizationGifts::create([
+                    'organization_id' => $win->filial_id,
+                    'gift_id' => $request->id
+                ]);
+                $gift->update([
+                    'current_count' => $gift->current_count-1]);
+         }
     }
 
     /**

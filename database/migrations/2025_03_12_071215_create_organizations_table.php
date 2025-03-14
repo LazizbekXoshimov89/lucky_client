@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->boolean('active')->default(false);
+            $table->integer('region_id');
             $table->timestamps();
         });
     }

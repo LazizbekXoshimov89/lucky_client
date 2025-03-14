@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->Integer('count');
             $table->Integer('current_count');
+            $table->boolean('is_supper')->default(false);
             $table->timestamps();
         });
     }

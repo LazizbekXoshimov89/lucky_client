@@ -26,8 +26,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post("gift/importFromExcel", [GiftController::class, "ImportFromExcel"]);
 Route::post("ticket/importFromExcel", [TicketController::class, "ImportFromExcel"]);
 Route::get("bakalWin", [GameController::class, "winBakal"]);
-Route::get("win", [GameController::class, "secondUsul"]);
-Route::get("win", [GameController::class, "thirdUsul"]);
-Route::get("win", [GameController::class, "thirdUsulD"]);
+Route::get("win2", [GameController::class, "secondUsul"]);
+Route::get("win3", [GameController::class, "thirdUsul"]);
+Route::get("win4", [GameController::class, "thirdUsulD"]);
+Route::get("finishWin", [GameController::class, "finishUsul"]);
 });
 

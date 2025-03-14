@@ -20,9 +20,12 @@ return new class extends Migration
             $table->boolean('active')->default(false);
             $table->string('workplace');
             $table->string('filial');
+            $table->integer('filial_id')->constrained('organizations')->onDelete('cascade');
             $table->string('phone_number');
-            $table->foreignId('gift_id')->nullable()->constrained('gifts');
-            $table->boolean('is_winner')->nullable();
+            $table->foreignId('gift_id')->nullable()
+                ->constrained('gifts')
+                ->onDelete('cascade');
+            $table->boolean('is_winner')->default(false);
             $table->timestamps();
         });
     }
